@@ -1,0 +1,142 @@
+import java.util.*;
+
+class BankAccount {
+    private static int nextAccountNumber = 1001;
+    private int accountNumber;
+    private String accountHolder;
+    private double balance;
+
+    public BankAccount(String accountHolder){
+        this.accountHolder = accountHolder;
+        this.balance=0.0;
+        accountNumber=nextAccountNumber++;
+    }
+
+    public int getAccountNumber(){
+        return accountNumber;
+    }
+
+    public String getAccountHolder(){
+        return accountHolder;
+    }
+
+    public double getBalance(){
+        return balance;
+    }
+
+    public void deposit(double amount){
+        if(amount<=0){
+            System.out.println("Deposit amount must be positive.");
+            return;
+        }
+        balance+=amount;
+        System.out.println("Deposited ₹" + amount + ". New balance: ₹" + balance);
+    }
+
+    public void withdraw(double amount){
+        if(amount<=0){
+            System.out.println("Withdrawal amount must be positive.");
+            return;
+        }
+        if(amount >balance){
+            System.out.println("Insufficient funds.");
+            return;
+        }
+        balance-=amount;
+        System.out.println("Withdrew ₹" + amount + ". New balance: ₹" + balance);
+    }
+
+    public void displayAccountInfo(){
+        System.out.println("Account Number: " + accountNumber);
+        System.out.println("Account Holder: " + accountHolder);
+        System.out.println("Balance: ₹" + balance);
+    }
+}
+
+public class Main {
+    private static Map<Integer, BankAccount> accounts = new HashMap<>();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args){
+        System.out.println("Welcome to Simple Bank________!");
+        boolean running = true;
+
+        while(running){
+            System.out.println("\n Menu:");
+            System.out.println("1. Create Account");
+            System.out.println("2. Deposit");
+            System.out.println("3. Withdraw");
+            System.out.println("4. View Account");
+            System.out.println("5. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch(choice){
+                case 1:
+                    createAccount();
+                    break;
+                case 2:
+                    deposit();
+                    break;
+                case 3:
+                    withdraw();
+                    break;
+                case 4:
+                    viewAccount();
+                    break;
+                case 5:
+                    System.out.println("Thank you for using Simple Bank. Goodbye!");
+                    running = false;
+                    break;
+                default:
+                    System.out.println("Invalid option. Try again.");
+            }
+        }
+    }
+
+    private static void createAccount(){
+        System.out.print("Enter account holder name: ");
+        String name = scanner.nextLine();
+        BankAccount account = new BankAccount(name);
+        accounts.put(account.getAccountNumber(), account);
+        System.out.println("Account created successfully!");
+        account.displayAccountInfo();
+    }
+
+    private static void deposit(){
+        BankAccount account = getAccountByNumber();
+        if(account != null){
+            System.out.print("Enter amount to deposit: ₹");
+            double amount = scanner.nextDouble();
+            account.deposit(amount);
+        }
+    }
+
+    private static void withdraw(){
+        BankAccount account = getAccountByNumber();
+        if(account != null){
+            System.out.print("Enter amount to withdraw: ₹");
+            double amount = scanner.nextDouble();
+            account.withdraw(amount);
+        }
+    }
+
+    private static void viewAccount(){
+        BankAccount account = getAccountByNumber();
+        if(account != null){
+            account.displayAccountInfo();
+        }
+    }
+
+    private static BankAccount getAccountByNumber(){
+        System.out.print("Enter account number: ");
+        int accNum = scanner.nextInt();
+        scanner.nextLine();
+        BankAccount account = accounts.get(accNum);
+        if(account == null){
+            System.out.println("Account not found.");
+        }
+        return account;
+    }
+}
